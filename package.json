@@ -1,0 +1,13 @@
+{
+  "name": "puppeteer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/searay-umihikari/puppeteer.git",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "iconv-lite": "^0.4.19",
+    "puppeteer": "^1.1.0",
+    "request": "^2.83.0"
+  }
+}
