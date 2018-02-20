@@ -31,8 +31,8 @@ async function main() {
   })
 
 
-  for(let i=0; i<1; i++){
-  // for(let i=0; i<indexULRList.length; i++){
+  // for(let i=0; i<1; i++){
+  for(let i=0; i<indexULRList.length; i++){
 
       //index単位で取得
       getUrl=indexULRList[i];
@@ -48,8 +48,8 @@ async function main() {
         perceActPage(actUrl)
       }
 
-        for(let p=2; p<=1; p++){
-        // for(let p=2; p<=maxPage; p++){
+        // for(let p=2; p<=1; p++){
+        for(let p=2; p<=maxPage; p++){
           let pageUrl=getUrl+"page="+p
           // body =  req({url: pageUrl, encoding: null}, (e, res, body) => {
           body = await doReq(pageUrl)
@@ -79,12 +79,16 @@ function perceActPage(url){
     let blood = $('.area-av30 table tr').eq('2').find("td").eq('1').text()
     let size = $('.area-av30 table tr').eq('3').find("td").eq('1').text()
 
-    let T = (size==="----" && size.indexOf("T")===-1) ? '' : size.match( new RegExp(/T(\d+)/) )[1]
-    let B = (size==="----" && size.indexOf("B")===-1) ? '' : size.match( new RegExp(/B(\d+)/) )[1]
-    let W = (size==="----" && size.indexOf("W")===-1) ? '' : size.match( new RegExp(/W(\d+)/) )[1]
-    let H = (size==="----" && size.indexOf("H")===-1) ? '' : size.match( new RegExp(/H(\d+)/) )[1]
+    console.log(size)
+    size=size.replace("Tカップ","")
+    size=size.replace("Bカップ","")
+    size=size.replace("Wカップ","")
+    size=size.replace("Hカップ","")
 
-  console.log(T)
+    let T = (size.indexOf("T")===-1) ? '' : size.match( new RegExp(/T(\d+)/) )[1]
+    let B = (size.indexOf("B")===-1) ? '' : size.match( new RegExp(/B(\d+)/) )[1]
+    let W = (size.indexOf("W")===-1) ? '' : size.match( new RegExp(/W(\d+)/) )[1]
+    let H = (size.indexOf("H")===-1) ? '' : size.match( new RegExp(/H(\d+)/) )[1]
 
     let birthplace = $('.area-av30 table tr').eq('4').find("td").eq('1').text()
     let hobby = $('.area-av30 table tr').eq('5').find("td").eq('1').text()
@@ -108,7 +112,7 @@ function perceActPage(url){
       hobby:hobby
     }
 
-    let data = [dmm_id,name,yomi,img,birth,constellation,blood,size,birthplace,hobby].join()+'\n'
+    let data = [dmm_id,name,yomi,img,birth,constellation,blood,T,B,W,H,birthplace,hobby].join()+'\n'
     console.log(data);
     fs.appendFileSync('act.csv',data)
 
