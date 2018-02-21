@@ -3,7 +3,7 @@ const cio = require('cheerio')
 const fs = require('fs')
 const iconv = require('iconv-lite');
 
-const baseUrl = 'http://actress'
+const baseUrl = 'http://actress.co.jp'
 const topUrl = baseUrl + '/-/top/';
 
 
@@ -55,9 +55,9 @@ async function main() {
     rdata = actData.join('\n')
     fs.appendFileSync('./actress'+i+'_1.csv', rdata)
 
-    actData = []
     // for (let p = 2; p <= 1; p++) {
     for (let p = 2; p <= maxPage; p++) {
+      actData = []
       let pageUrl = getUrl + "page=" + p
       // body =  req({url: pageUrl, encoding: null}, (e, res, body) => {
       body = await doReq(pageUrl)
