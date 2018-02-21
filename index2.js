@@ -3,7 +3,7 @@ const cio = require('cheerio')
 const fs = require('fs')
 const iconv = require('iconv-lite');
 
-const baseUrl = 'http://actress.dmm.co.jp'
+const baseUrl = 'http://actress'
 const topUrl = baseUrl + '/-/top/';
 
 

@@ -131,4 +131,6 @@ $RECYCLE.BIN/
 yarn.lock
 
 
+actress*.csv
+
 # End of https://www.gitignore.io/api/node,linux,macos,windows
