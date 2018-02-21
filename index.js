@@ -30,30 +30,33 @@ async function main() {
   })
 
 
-  for (let i = 0; i < 1; i++) {
-    // for(let i=0; i<indexULRList.length; i++){
-
+  // for (let i = 0; i < 1; i++) {
+  for (let i = 0; i < indexULRList.length; i++) {
     //index単位で取得
     getUrl = indexULRList[i];
-
     body = await doReq(getUrl)
 
     $ = get$(body)
     let maxPage = Number($("td.header").eq(1).text().match(new RegExp("全(.*)ページ中"))[1])
-
     let actData = []
+
     await Promise.all([
       (async () => {
-        // for(let a=0; a<$('.list').length; a++){
-        for (let a = 0; a < 1; a++) {
+        for (let a = 0; a < $('.list').length; a++) {
+          // for (let a = 0; a < 1; a++) {
           let actUrl = $('.list').eq(a).find('.pic a').attr('href')
-          await perceActPage(actUrl).then( (r)=>{actData.push(r)} )
+          await perceActPage(actUrl).then((r) => {
+            actData.push(r)
+          })
         }
       })()
     ])
 
-    for (let p = 2; p <= 1; p++) {
-      // for(let p=2; p<=maxPage; p++){
+    let rdata = actData.join('\n')
+    fs.appendFileSync('./actress'+i_1+'.csv', rdata)
+
+    // for (let p = 2; p <= 1; p++) {
+    for (let p = 2; p <= maxPage; p++) {
       let pageUrl = getUrl + "page=" + p
       // body =  req({url: pageUrl, encoding: null}, (e, res, body) => {
       body = await doReq(pageUrl)
@@ -62,12 +65,14 @@ async function main() {
         (async () => {
           for (let a = 0; a < $('.list').length; a++) {
             let actUrl = $('.list').eq(a).find('.pic a').attr('href')
-            await perceActPage(actUrl).then( (r)=>{actData.push(r)} )
+            await perceActPage(actUrl).then((r) => {
+              actData.push(r)
+            })
           }
         })()
       ])
     }
-    console.log(actData)
+
 
   }
 }
@@ -80,16 +85,29 @@ function perceActPage(url) {
       $ = get$(body)
       let link = $("link[rel=canonical]").attr('href')
       let dmm_id = link.match(new RegExp("actress_id=(.*)/"))[1]
-      let names = $(".t1 h1").text().match(new RegExp("(.*)（(.*)）"))
-      let name = names[1]
-      let yomi = names[2]
-      let img = $('.area-av30 td').eq('0').find("img").attr('src')
+
+      let _name = $(".t1 h1").text()
+
+      let names = ((_name.match(new RegExp('（', "g")) || []).length == 1) ? _name.match(new RegExp("(.*)（(.*)）")) : _name.match(new RegExp("(.*)（(.*（.*)））", 'm'))
+
+
+      let name = ""
+      let yomi = ""
+      if (names instanceof Array) {
+        name = (names.length > 0) ? names[1] : _name
+        yomi = (names.length > 1) ? names[2].replace("（", "") : ""
+      } else {
+        name = _name
+      }
+
+      console.log(name)
+
+      let img = $('.area-av30 td').eq('0').find("img").attr('src').replace('http://pics.dmm.co.jp', '')
       let birth = $('.area-av30 table tr').eq('0').find("td").eq('1').text()
       let constellation = $('.area-av30 table tr').eq('1').find("td").eq('1').text()
       let blood = $('.area-av30 table tr').eq('2').find("td").eq('1').text()
       let size = $('.area-av30 table tr').eq('3').find("td").eq('1').text()
 
-      console.log(size)
       size = size.replace("Tカップ", "")
       size = size.replace("Bカップ", "")
       size = size.replace("Wカップ", "")
@@ -122,7 +140,7 @@ function perceActPage(url) {
         hobby: hobby
       }
 
-      let data = [dmm_id, name, yomi, img, birth, constellation, blood, T, B, W, H, birthplace, hobby].join() + '\n'
+      let data = [dmm_id, name, yomi, img, birth, constellation, blood, T, B, W, H, birthplace, hobby].join()
 
       resolve(data)
     })
