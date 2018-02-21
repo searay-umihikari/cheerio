@@ -41,13 +41,13 @@ async function main() {
     $ = get$(body)
     let maxPage = Number($("td.header").eq(1).text().match(new RegExp("全(.*)ページ中"))[1])
 
+    let actData = []
     await Promise.all([
       (async () => {
-
         // for(let a=0; a<$('.list').length; a++){
         for (let a = 0; a < 1; a++) {
           let actUrl = $('.list').eq(a).find('.pic a').attr('href')
-          console.log( perceActPage(actUrl) )
+          await perceActPage(actUrl).then( (r)=>{actData.push(r)} )
         }
       })()
     ])
@@ -58,18 +58,17 @@ async function main() {
       // body =  req({url: pageUrl, encoding: null}, (e, res, body) => {
       body = await doReq(pageUrl)
       $ = get$(body)
-      let actData = []
       await Promise.all([
         (async () => {
           for (let a = 0; a < $('.list').length; a++) {
             let actUrl = $('.list').eq(a).find('.pic a').attr('href')
-            console.log(await perceActPage(actUrl))
+            await perceActPage(actUrl).then( (r)=>{actData.push(r)} )
           }
         })()
       ])
-
-      console.log(actData)
     }
+    console.log(actData)
+
   }
 }
 
@@ -125,7 +124,7 @@ function perceActPage(url) {
 
       let data = [dmm_id, name, yomi, img, birth, constellation, blood, T, B, W, H, birthplace, hobby].join() + '\n'
 
-      return resolve("ok")
+      resolve(data)
     })
 
   })
