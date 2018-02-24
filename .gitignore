@@ -125,6 +125,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+actress/*
 
 #edit
 .idea

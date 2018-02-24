@@ -3,8 +3,9 @@ const cio = require('cheerio')
 const fs = require('fs')
 const iconv = require('iconv-lite');
 
-const baseUrl = 'http://actress.co.jp'
+const baseUrl = 'http://actress'
 const topUrl = baseUrl + '/-/top/';
+const outPath = './actress/'
 
 
 main()
@@ -32,6 +33,9 @@ async function main() {
 
   // for (let i = 0; i < 1; i++) {
   for (let i = 0; i < indexULRList.length; i++) {
+
+    outFilePath=outPath+'actress'+i+'_1.csv'
+
     //index単位で取得
     getUrl = indexULRList[i];
     body = await doReq(getUrl)
@@ -40,31 +44,12 @@ async function main() {
     let maxPage = Number($("td.header").eq(1).text().match(new RegExp("全(.*)ページ中"))[1])
     let actData = []
 
-    await Promise.all([
-      (async () => {
-        for (let a = 0; a < $('.list').length; a++) {
-          // for (let a = 0; a < 1; a++) {
-          let actUrl = $('.list').eq(a).find('.pic a').attr('href')
-          await perceActPage(actUrl).then((r) => {
-            actData.push(r)
-          })
-        }
-      })()
-    ])
+    if(!isExistFile(outFilePath)) {
 
-    rdata = actData.join('\n')
-    fs.appendFileSync('./actress'+i+'_1.csv', rdata)
-
-    // for (let p = 2; p <= 1; p++) {
-    for (let p = 2; p <= maxPage; p++) {
-      actData = []
-      let pageUrl = getUrl + "page=" + p
-      // body =  req({url: pageUrl, encoding: null}, (e, res, body) => {
-      body = await doReq(pageUrl)
-      $ = get$(body)
       await Promise.all([
         (async () => {
           for (let a = 0; a < $('.list').length; a++) {
+            // for (let a = 0; a < 1; a++) {
             let actUrl = $('.list').eq(a).find('.pic a').attr('href')
             await perceActPage(actUrl).then((r) => {
               actData.push(r)
@@ -72,9 +57,36 @@ async function main() {
           }
         })()
       ])
-      rdata = actData.join('\n')
-      fs.appendFileSync('./actress'+i+'_'+p+'.csv', rdata)
 
+      rdata = actData.join('\n')
+      fs.appendFileSync(outFilePath, rdata)
+    }
+
+    // for (let p = 2; p <= 1; p++) {
+    for (let p = 2; p <= maxPage; p++) {
+
+      outFilePath=outPath+'actress'+i+'_'+p+'.csv'
+      if(!isExistFile(outFilePath)) {
+
+        actData = []
+        let pageUrl = getUrl + "page=" + p
+        // body =  req({url: pageUrl, encoding: null}, (e, res, body) => {
+        body = await doReq(pageUrl)
+        $ = get$(body)
+        await Promise.all([
+          (async () => {
+            for (let a = 0; a < $('.list').length; a++) {
+              let actUrl = $('.list').eq(a).find('.pic a').attr('href')
+              await perceActPage(actUrl).then((r) => {
+                actData.push(r)
+              })
+            }
+          })()
+        ])
+        rdata = actData.join('\n')
+        fs.appendFileSync(outFilePath, rdata)
+
+      }
     }
 
 
@@ -165,4 +177,13 @@ function doReq(url) {
       }
     })
   })
+}
+
+function isExistFile(file) {
+  try {
+    fs.statSync(file);
+    return true
+  } catch(err) {
+    if(err.code === 'ENOENT') return false
+  }
 }
