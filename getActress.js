@@ -34,7 +34,7 @@ async function main() {
   // for (let i = 0; i < 1; i++) {
   for (let i = 0; i < indexULRList.length; i++) {
 
-    outFilePath=outPath+'actress'+i+'_1.csv'
+    outFilePath = outPath + 'actress' + i + '_1.csv'
 
     //index単位で取得
     getUrl = indexULRList[i];
@@ -44,7 +44,7 @@ async function main() {
     let maxPage = Number($("td.header").eq(1).text().match(new RegExp("全(.*)ページ中"))[1])
     let actData = []
 
-    if(!isExistFile(outFilePath)) {
+    if (!isExistFile(outFilePath)) {
 
       await Promise.all([
         (async () => {
@@ -58,15 +58,15 @@ async function main() {
         })()
       ])
 
-      rdata = actData.join('\n')
+      rdata = actData.join('\n')+'\n'
       fs.appendFileSync(outFilePath, rdata)
     }
 
     // for (let p = 2; p <= 1; p++) {
     for (let p = 2; p <= maxPage; p++) {
 
-      outFilePath=outPath+'actress'+i+'_'+p+'.csv'
-      if(!isExistFile(outFilePath)) {
+      outFilePath = outPath + 'actress' + i + '_' + p + '.csv'
+      if (!isExistFile(outFilePath)) {
 
         actData = []
         let pageUrl = getUrl + "page=" + p
@@ -83,7 +83,7 @@ async function main() {
             }
           })()
         ])
-        rdata = actData.join('\n')
+        rdata = actData.join('\n')+'\n'
         fs.appendFileSync(outFilePath, rdata)
 
       }
@@ -116,10 +116,26 @@ function perceActPage(url) {
         name = _name
       }
 
-      console.log(name)
+      // console.log(name)
 
       let img = $('.area-av30 td').eq('0').find("img").attr('src').replace('http://pics.dmm.co.jp', '')
       let birth = $('.area-av30 table tr').eq('0').find("td").eq('1').text()
+
+      let by = ""
+      let bm = ""
+      let bd = ""
+      if (birth === '----') {
+      } else {
+        // console.log(birth)
+        by = birth.match(new RegExp(/(\d+)年/))
+        bm = birth.match(new RegExp(/(\d+)月/))
+        bd = birth.match(new RegExp(/(\d+)日/))
+        by = (by.length > 0) ? by[1] : ''
+        bm = (bm.length > 0) ? bm[1] : ''
+        bd = (bd.length > 0) ? bd[1] : ''
+      }
+
+
       let constellation = $('.area-av30 table tr').eq('1').find("td").eq('1').text()
       let blood = $('.area-av30 table tr').eq('2').find("td").eq('1').text()
       let size = $('.area-av30 table tr').eq('3').find("td").eq('1').text()
@@ -146,6 +162,9 @@ function perceActPage(url) {
         url: link,
         img: img,
         birth: birth,
+        by: by,
+        bm: bm,
+        bd: bd,
         constellation: constellation,
         blood: blood,
         T: T,
@@ -156,8 +175,8 @@ function perceActPage(url) {
         hobby: hobby
       }
 
-      let data = [dmm_id, name, yomi, img, birth, constellation, blood, T, B, W, H, birthplace, hobby].join()
-
+      let data = [dmm_id, name, yomi, img, by, bm, bd, constellation, blood, T, B, W, H, birthplace, hobby].join().replace(new RegExp(/----/,"g"),'')
+      console.log(data)
       resolve(data)
     })
 
@@ -183,7 +202,7 @@ function isExistFile(file) {
   try {
     fs.statSync(file);
     return true
-  } catch(err) {
-    if(err.code === 'ENOENT') return false
+  } catch (err) {
+    if (err.code === 'ENOENT') return false
   }
 }
