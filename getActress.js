@@ -156,8 +156,7 @@ function perceActPage(url) {
 
       let birthplace = $('.area-av30 table tr').eq('4').find("td").eq('1').text()
       let hobby = $('.area-av30 table tr').eq('5').find("td").eq('1').text()
-      hobby = hobby.replace(',', '、')
-
+      hobby = hobby.replace(new RegExp(/,/, "g"), '、')
 
       let infoData = {
         dmm_id: dmm_id,
