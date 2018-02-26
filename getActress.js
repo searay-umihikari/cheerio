@@ -58,7 +58,7 @@ async function main() {
         })()
       ])
 
-      rdata = actData.join('\n')+'\n'
+      rdata = actData.join('\n') + '\n'
       fs.appendFileSync(outFilePath, rdata)
     }
 
@@ -83,7 +83,7 @@ async function main() {
             }
           })()
         ])
-        rdata = actData.join('\n')+'\n'
+        rdata = actData.join('\n') + '\n'
         fs.appendFileSync(outFilePath, rdata)
 
       }
@@ -140,6 +140,9 @@ function perceActPage(url) {
       let blood = $('.area-av30 table tr').eq('2').find("td").eq('1').text()
       let size = $('.area-av30 table tr').eq('3').find("td").eq('1').text()
 
+      let cap = size.match(new RegExp(/([A-Z])カップ/))
+      cap = (cap === null) ? '' : cap[1]
+
       size = size.replace("Tカップ", "")
       size = size.replace("Bカップ", "")
       size = size.replace("Wカップ", "")
@@ -149,6 +152,7 @@ function perceActPage(url) {
       let B = (size.indexOf("B") === -1) ? '' : size.match(new RegExp(/B(\d+)/))[1]
       let W = (size.indexOf("W") === -1) ? '' : size.match(new RegExp(/W(\d+)/))[1]
       let H = (size.indexOf("H") === -1) ? '' : size.match(new RegExp(/H(\d+)/))[1]
+
 
       let birthplace = $('.area-av30 table tr').eq('4').find("td").eq('1').text()
       let hobby = $('.area-av30 table tr').eq('5').find("td").eq('1').text()
@@ -171,11 +175,12 @@ function perceActPage(url) {
         B: B,
         W: W,
         H: H,
+        cap: cap,
         birthplace: birthplace,
         hobby: hobby
       }
 
-      let data = [dmm_id, name, yomi, img, by, bm, bd, constellation, blood, T, B, W, H, birthplace, hobby].join().replace(new RegExp(/----/,"g"),'')
+      let data = [dmm_id, name, yomi, img, by, bm, bd, constellation, blood, T, B, W, H, cap, birthplace, hobby].join().replace(new RegExp(/----/, "g"), '')
       console.log(data)
       resolve(data)
     })
