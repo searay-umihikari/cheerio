@@ -1,5 +1,5 @@
-const csv = require('csv')
 const fs = require('fs')
+const csv = require('csvtojson')
 
 const parser = csv.parse((err, data) => console.log(data));
 let csvdata=fs.createReadStream('./actress.csv').pipe(parser)

@@ -125,12 +125,14 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-actress/*
 
 #edit
 .idea
 yarn.lock
 
+actress/*
 *.csv
+*.zip
+actress.json
 
 # End of https://www.gitignore.io/api/node,linux,macos,windows
