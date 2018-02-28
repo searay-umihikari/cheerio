@@ -134,5 +134,5 @@ actress/*
 *.csv
 *.zip
 actress.json
-
+public
 # End of https://www.gitignore.io/api/node,linux,macos,windows
