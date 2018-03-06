@@ -10,6 +10,8 @@
     "cheerio": "^1.0.0-rc.2",
     "csv": "^2.0.0",
     "csvtojson": "^1.1.9",
+    "firebase": "^4.10.1",
+    "firebase-tools": "^3.17.4",
     "iconv-lite": "^0.4.19",
     "request": "^2.83.0"
   }
